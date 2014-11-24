@@ -117,9 +117,9 @@ function GM:HUDPaint()
 
 	self.BaseClass:HUDPaint()
 
-	GAMEMODE:UpdatePerrinHUD()
+	--GAMEMODE:UpdatePerrinHUD()
 	
-	--MattHUD()
+	MattHUD()
 	
 	--GAMEMODE:OnHUDPaint()
 	GAMEMODE:RefreshHUD()

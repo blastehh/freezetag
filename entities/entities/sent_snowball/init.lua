@@ -17,8 +17,8 @@ function ENT:Initialize()
 	self.Break = string.Explode(" ",table.Random( GAMEMODE.SnowballHit ) )[1]
 	if IsValid( phys ) and IsValid( self.Entity ) then
 		phys:Wake()
-		phys:EnableGravity(false)
-		phys:SetVelocityInstantaneous( self.Entity:GetAngles():Forward():GetNormalized() * 1600 )
+		--phys:EnableGravity(false)
+		phys:SetVelocityInstantaneous( self.Entity:GetAngles():Forward():GetNormalized() * 2050 )
 	end
 
 	
@@ -49,6 +49,8 @@ function ENT:PhysicsCollide( data, phys )
 	for k,v in pairs( player.GetAll() ) do
 		if v:GetPos():Distance( self.Entity:GetPos() ) < 100 and v != data.HitEntity then
 			v:TakeDamage( self.SplashDamage, self.Entity:GetOwner(), self.Entity )
+		elseif v:GetPos():Distance( self.Entity:GetPos() ) < 120 and v != data.HitEntity then
+			v:TakeDamage( math.Round(self.SplashDamage * 0.3) , self.Entity:GetOwner(), self.Entity )
 		end
 	end
 	

@@ -27,7 +27,7 @@ function ENT:Think()
 	particle:SetEndAlpha( 0 ) 
 	particle:SetStartSize( math.random(1,10) ) 
 	particle:SetEndSize( math.random(15,30) ) 
-	particle:SetColor( 255, 255, 255 ) 
+	particle:SetColor( 225, 225, 255 ) 
 	
 	particle:SetAirResistance( 25 )
 	particle:SetGravity( Vector( 0, 0, -50 ) )

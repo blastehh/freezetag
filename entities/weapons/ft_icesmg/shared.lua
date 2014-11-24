@@ -33,7 +33,8 @@ SWEP.Primary.Recoil			= 2.0
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.Cone			= 0.035
 SWEP.Primary.Delay			= 0.075
-
+SWEP.Primary.Ammo			= "SMG1"
 SWEP.Primary.ClipSize		= 40
 SWEP.Primary.DefaultClip	= 99999
+print("PrimaryDefaultClip SMG: ".. SWEP.Primary.DefaultClip)
 SWEP.Primary.Automatic		= true

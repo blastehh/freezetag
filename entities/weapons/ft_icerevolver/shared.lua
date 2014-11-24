@@ -33,7 +33,7 @@ SWEP.Primary.Recoil			= 9.5
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.Cone			= 0.025
 SWEP.Primary.Delay			= 0.90
-
+SWEP.Primary.Ammo			= "357"
 SWEP.Primary.ClipSize		= 6
 SWEP.Primary.DefaultClip	= 24
 SWEP.Primary.Automatic		= false

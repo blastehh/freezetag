@@ -1,0 +1,10 @@
+"UnlitGeneric"
+{
+	"$basetexture" "freezetag/redind"
+	"$nocull" 1
+	"$nodecal" 1
+	"$translucent" 1
+	"$vertexalpha" 1
+	"$vertexcolor" 1
+	"$nolod" 1
+}

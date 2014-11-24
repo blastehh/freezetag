@@ -1,6 +1,8 @@
 resource.AddFile("materials/freezetag/ice.vmt")
 resource.AddFile("materials/freezetag/icescreen.vmt")
 resource.AddFile("materials/freezetag/frost.vmt")
+resource.AddFile("materials/freezetag/redind.vmt")
+resource.AddFile("materials/freezetag/blueind.vmt")
 resource.AddSingleFile("materials/freezetag/health.png")
 resource.AddSingleFile("materials/freezetag/ammo.png")
 resource.AddSingleFile("materials/freezetag/bluecold.png")

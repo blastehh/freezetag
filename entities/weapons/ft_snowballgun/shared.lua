@@ -33,9 +33,10 @@ SWEP.Primary.Recoil			= 5.5
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.Cone			= 0.025
 SWEP.Primary.Delay			= 1.800
-
+SWEP.Primary.Ammo			= "RPG_Round"
 SWEP.Primary.ClipSize		= 1
-SWEP.Primary.DefaultClip	= 3
+SWEP.Primary.DefaultClip	= 6
+
 SWEP.Primary.Automatic		= false
 
 function SWEP:PrimaryAttack()
