@@ -13,7 +13,7 @@ function EFFECT:Init( data )
 	self.EndPos = data:GetOrigin()
 	
 	self.Dir 		= self.EndPos - self.StartPos
-	self.Normal     = ( self.EndPos - self.StartPos ):Normalize()
+	self.Normal     = ( self.EndPos - self.StartPos ):GetNormalized()
 	self.Length     = math.Rand( 0.15, 0.30 )
 	self.Size       = math.Rand( 5, 15 )
 	

@@ -2,8 +2,8 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 include( 'shared.lua' )
 
-ENT.HitDamage = 80
-ENT.SplashDamage = 40
+ENT.HitDamage = 45
+ENT.SplashDamage = 30
 
 function ENT:Initialize()
  
@@ -12,17 +12,16 @@ function ENT:Initialize()
 	self.Entity:PhysicsInit( SOLID_VPHYSICS )
 	self.Entity:SetMoveType( MOVETYPE_VPHYSICS )
 	self.Entity:SetSolid( SOLID_VPHYSICS )
-	
-	self.Entity:SetMaterial( "freezetag/snow" )
-
+	self.Entity:SetMaterial( "freezetag/ice" )
 	local phys = self.Entity:GetPhysicsObject()
-	
-	if ValidEntity( phys ) then
+	self.Break = string.Explode(" ",table.Random( GAMEMODE.SnowballHit ) )[1]
+	if IsValid( phys ) and IsValid( self.Entity ) then
 		phys:Wake()
-		phys:SetVelocityInstantaneous( self.Entity:GetAngles():Forward():Normalize() * 1500 )
+		phys:EnableGravity(false)
+		phys:SetVelocityInstantaneous( self.Entity:GetAngles():Forward():GetNormalized() * 1600 )
 	end
 
-	self.Break = table.Random( GAMEMODE.SnowballHit )
+	
 	
 end
 

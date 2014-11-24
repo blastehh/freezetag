@@ -10,7 +10,7 @@ end
 
 if CLIENT then
 
-	SWEP.DrawAmmo			= true
+	SWEP.DrawAmmo			= false
 	SWEP.DrawCrosshair		= false
 	SWEP.CSMuzzleFlashes	= true
 
@@ -25,7 +25,7 @@ if CLIENT then
 	SWEP.IconFont = "HL2MPTypeDeath"
 	
 	function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
-		draw.SimpleText( self.IconLetter, self.IconFont, x + wide/2, y + tall/2.5, Color( 15, 20, 200, 255 ), TEXT_ALIGN_CENTER )
+		draw.SimpleText( self.IconLetter, self.IconFont, x + wide/2, y + tall/2.5, Color( 110, 210, 245, 255 ), TEXT_ALIGN_CENTER )
 	end
 	
 end
@@ -45,7 +45,7 @@ SWEP.Primary.Cone			= 0.025
 SWEP.Primary.Delay			= 0.15
 
 SWEP.Primary.ClipSize		= 50
-SWEP.Primary.DefaultClip	= 99999
+SWEP.Primary.DefaultClip	= 1
 SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo			= "pistol"
 
@@ -89,7 +89,8 @@ function SWEP:Think()
 end
 
 function SWEP:Reload()
-
+	if self.Weapon:Clip1() >= self.Primary.ClipSize then return end
+	
 	self.Weapon:DefaultReload( ACT_VM_RELOAD )
 	
 	self.ReloadPlay = true
@@ -120,7 +121,7 @@ function SWEP:PrimaryAttack()
 	self.Weapon:ShootBullets( self.Primary.Damage, self.Primary.NumShots, self.Primary.Cone )
 	self.Weapon:TakePrimaryAmmo( 1 )
 	
-	if IsFirstTimePredicted() and ValidEntity( self.Owner ) then
+	if IsFirstTimePredicted() and IsValid( self.Owner ) then
 		
 		if SERVER then
 		

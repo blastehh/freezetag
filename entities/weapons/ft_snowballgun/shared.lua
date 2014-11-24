@@ -12,10 +12,10 @@ if ( CLIENT ) then
 	
 	SWEP.PrintName = "Snowball Cannon"
 	SWEP.IconLetter = "3"
-	SWEP.Slot = 0
+	SWEP.Slot = 4
 	SWEP.Slotpos = 2
 	
-	killicon.AddFont( "sent_snowball", "HL2MPTypeDeath", SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
+	killicon.AddFont( "sent_snowball", "HL2MPTypeDeath", SWEP.IconLetter, Color( 110, 210, 245, 255 ) )
 
 end
 
@@ -35,6 +35,7 @@ SWEP.Primary.Cone			= 0.025
 SWEP.Primary.Delay			= 1.800
 
 SWEP.Primary.ClipSize		= 1
+SWEP.Primary.DefaultClip	= 3
 SWEP.Primary.Automatic		= false
 
 function SWEP:PrimaryAttack()
@@ -48,7 +49,7 @@ function SWEP:PrimaryAttack()
 	
 	self.AnimTime = CurTime() + 0.2
 	
-	if IsFirstTimePredicted() and ValidEntity( self.Owner ) then
+	if IsFirstTimePredicted() and IsValid( self.Owner ) then
 		
 		if SERVER then
 		

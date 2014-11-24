@@ -3,16 +3,14 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_postprocess.lua" )
 AddCSLuaFile( "cl_hud.lua" )
+AddCSLuaFile( "cl_teamfrozen.lua" )
 
 include( "shared.lua" )
 include( "tables.lua" )
 include( "ply_extension.lua" )
+include( "sv_resources.lua" )
 
 function GM:OnRoundStart()
-	
-	for k,v in pairs( player.GetAll() ) do
-		v:Thaw()
-	end
 	
 	UTIL_UnFreezeAllPlayers()
 	
@@ -24,16 +22,21 @@ function GM:OnRoundResult( t )
 	
 	for k,v in pairs( player.GetAll() ) do 
 	
-		v:Thaw()
+		--v:Thaw()
 		
 		if v:Team() == t then
-			v:SendLua("surface.PlaySound( \"" .. GAMEMODE.WinSound .. "\" )")
+			
+			v:PlaySound(GAMEMODE.WinSound)
 		else
-			v:SendLua("surface.PlaySound( \"" .. GAMEMODE.LoseSound .. "\" )")
+			v:PlaySound(GAMEMODE.LoseSound)
 		end
 		
 	end
-	
+	timer.Create("ThawRoundEnd", 3,1, function()
+		for k,v in pairs( player.GetAll() ) do
+			v:Thaw()
+		end
+	end)
 end
 
 function GM:RoundTimerEnd()
@@ -62,8 +65,9 @@ function GM:CheckRoundEnd()
 
 end
 
-function GM:EntityTakeDamage( ent, inflictor, attacker, amount, dmginfo )
-
+function GM:EntityTakeDamage( ent, dmginfo )
+	local inflictor, attacker, amount = dmginfo:GetInflictor(), dmginfo:GetAttacker(), dmginfo:GetDamage()
+	
 	if not ent:IsPlayer() then return end
 	if not ent:Alive() then return end
 	
@@ -75,37 +79,29 @@ function GM:EntityTakeDamage( ent, inflictor, attacker, amount, dmginfo )
 	end
 	
 	if ent:IsFrozen() then
-	
+		
 		ent:EmitSound( table.Random( GAMEMODE.GlassHit ) )
 		
 		if attacker:Team() == ent:Team() then
-		
-			ent:SetHealth( math.Clamp( ent:Health() + dmginfo:GetDamage() * 0.3, 1, ent:GetMaxHealth() ) ) 
 			dmginfo:SetDamage( 0 )
-			
-			if ent:Health() == ent:GetMaxHealth() then
-			
-				ent:Thaw( true )
-				
-				umsg.Start( "PlayerKilledByPlayer" ) 
-		 		umsg.Entity( ent ) 
-		 		umsg.String( "thaw" ) 
-		 		umsg.Entity( attacker ) 
-		 		umsg.End() 
-				
-			end
-			
-		else
-			dmginfo:SetDamage( 0 )
+			return
 		end
 		
-		return
+		dmginfo:ScaleDamage( 0.40 )
 		
+		if (ent:Health() - dmginfo:GetDamage()) <= 1 then
+		
+			ent:SetHealth( 1 )
+			dmginfo:SetDamage( 0 )
+			return
+			
+		end
+
 	end
 	
-	if ent:Health() - dmginfo:GetDamage() < 1 then
+	if ent:Health() - dmginfo:GetDamage() <= 1 then
 	
-		if ValidEntity( attacker ) and attacker:IsPlayer() then
+		if IsValid( attacker ) and attacker:IsPlayer() then
 		
 			if attacker:Team() != ent:Team() then
 			
@@ -121,16 +117,24 @@ function GM:EntityTakeDamage( ent, inflictor, attacker, amount, dmginfo )
 				if ( ( inflictor and inflictor == attacker ) or inflictor:IsPlayer() ) then
 					inflictor = attacker:GetActiveWeapon()
 				end
-				
-				umsg.Start( "PlayerKilledByPlayer" ) 
-				umsg.Entity( ent ) 
-				umsg.String( inflictor:GetClass() ) 
-				umsg.Entity( attacker ) 
-				umsg.End() 
-				
+
+				net.Start( "PlayerKilledByPlayer" )
+		
+					net.WriteEntity( ent )
+					net.WriteString( inflictor:GetClass() )
+					net.WriteEntity( attacker )
+		
+				net.Broadcast()
+
 			end
 		end
 	end
+end
+
+function GM:ScalePlayerDamage( ply, hitgroup, dmginfo )
+	
+	dmginfo:ScaleDamage( 1 )
+	
 end
 
 function GM:GetFrozenPlayers( t )
@@ -147,4 +151,17 @@ function GM:GetFrozenPlayers( t )
 	
 	return num
 	
+end
+
+function GM:Think()
+
+	LastThawTick = LastThawTick or 0
+	if CurTime() - LastThawTick > 0.3 then
+		for k,v in pairs(player.GetAll()) do
+			if v:IsFrozen() and v:Alive() then
+				v:ThawCheck()
+			end
+		end
+		LastThawTick = CurTime()
+	end
 end

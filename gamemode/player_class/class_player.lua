@@ -2,7 +2,7 @@
 local CLASS = {}
 
 CLASS.DisplayName			= "Soldier"
-CLASS.WalkSpeed 			= 250
+CLASS.WalkSpeed 			= 350
 CLASS.CrouchedWalkSpeed 	= 0.5
 CLASS.RunSpeed				= 350
 CLASS.DuckSpeed				= 0.2

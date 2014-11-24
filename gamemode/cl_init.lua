@@ -1,6 +1,7 @@
-include( 'shared.lua' )
-include( 'cl_postprocess.lua' )
-include( 'cl_hud.lua' )
+include( "shared.lua" )
+include( "cl_postprocess.lua" )
+include( "cl_hud.lua" )
+include( "cl_teamfrozen.lua" )
 
 function GM:Initialize( )	
 
@@ -28,7 +29,7 @@ function GM:OnHUDPaint()
 	if LocalPlayer():GetNetworkedBool( "Frozen", false ) then
 	
 		surface.SetTexture( surface.GetTextureID( "freezetag/icescreen" ) )
-		surface.SetDrawColor( 255, 255, 255, 255 )
+		surface.SetDrawColor( 255, 255, 255, 100 )
 		surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
 	
 	end
@@ -50,3 +51,29 @@ function GM:HUDShouldDraw( name )
 	return true
 	
 end
+
+function ThirdPersonCheck( ply, pos, angles, fov )
+		
+	if LocalPlayer():GetNetworkedBool( "Frozen", false ) then
+		local view = {}
+		view.origin = pos-( angles:Forward()*100 )
+		view.angles = angles
+		view.fov = fov
+		return view
+	end
+end
+	
+hook.Add( "CalcView", "MyCalcView", ThirdPersonCheck )
+	
+hook.Add( "ShouldDrawLocalPlayer", "MyShouldDrawLocalPlayer", function( ply )
+	if LocalPlayer():GetNetworkedBool( "Frozen", false ) then
+		return true
+	end
+end )
+
+hook.Add("CreateMove", "FrozenMovement", function( cmd )
+	if LocalPlayer():GetNetworkedBool( "Frozen", false ) then
+		cmd:ClearMovement()
+		cmd:RemoveKey(IN_ATTACK + IN_ATTACK2 + IN_JUMP + IN_DUCK + IN_RELOAD)
+	end
+end)

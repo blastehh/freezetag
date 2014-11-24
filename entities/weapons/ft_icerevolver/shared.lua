@@ -12,10 +12,10 @@ if ( CLIENT ) then
 	
 	SWEP.PrintName = "Icicle Revolver"
 	SWEP.IconLetter = "."
-	SWEP.Slot = 0
+	SWEP.Slot = 1
 	SWEP.Slotpos = 0
 	
-	killicon.AddFont( "ft_icerevolver", "HL2MPTypeDeath", SWEP.IconLetter, Color( 255, 80, 0, 255 ) )
+	killicon.AddFont( "ft_icerevolver", "HL2MPTypeDeath", SWEP.IconLetter, Color( 110, 210, 245, 255 ) )
 
 end
 
@@ -28,17 +28,18 @@ SWEP.WorldModel	= "models/weapons/w_357.mdl"
 
 SWEP.Primary.Sound			= Sound( "Weapon_357.Single" )
 SWEP.Primary.Reload         = nil
-SWEP.Primary.Damage			= 45
-SWEP.Primary.Recoil			= 7.5
+SWEP.Primary.Damage			= 30
+SWEP.Primary.Recoil			= 9.5
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.Cone			= 0.025
-SWEP.Primary.Delay			= 0.500
+SWEP.Primary.Delay			= 0.90
 
 SWEP.Primary.ClipSize		= 6
+SWEP.Primary.DefaultClip	= 24
 SWEP.Primary.Automatic		= false
 
 function SWEP:Reload()
-
+	if self.Weapon:Clip1() >= self.Primary.ClipSize then return end
 	self.Weapon:DefaultReload( ACT_VM_RELOAD )
 	
 end

@@ -12,6 +12,42 @@ local ObserveMode = 0
 local ObserveTarget = NULL
 local InVote = false
 
+local fontCreated = false
+local hudHealth = nil
+local hudHealthText = nil
+local hudAmmo = nil
+local hudAmmoText = nil
+local hudTime = nil
+local hudTimeText = nil
+local hudTeams = nul
+local hudTeamsText = nil
+local redrawTeams = true
+
+-- Materials List
+local hpBG = Material( "freezetag/health.png", "smooth" )
+local ammoBG = Material( "freezetag/ammo.png", "smooth" )
+local timeBG = Material( "freezetag/time.png", "smooth" )
+
+if (!fontCreated) then
+		surface.CreateFont( "PerrinFont", {
+			font = "Arial", 
+			size = 50, 
+			weight = 2000, 
+			blursize = 0, 
+			scanlines = 0, 
+			antialias = true, 
+			underline = false, 
+			italic = false, 
+			strikeout = false, 
+			symbol = false, 
+			rotary = false, 
+			shadow = false, 
+			additive = false, 
+			outline = false, 
+		} )	
+		fontCreated = true
+end
+
 function GM:AddHUDItem( item, pos, parent )
 	hudScreen:AddItem( item, parent, pos )
 end
@@ -72,7 +108,7 @@ function GM:RefreshHUD()
 	elseif ( !Alive ) then
 		GAMEMODE:UpdateHUD_Dead( WaitingToRespawn, InRound )
 	else
-		GAMEMODE:UpdateHUD_Alive( InRound )
+		/* GAMEMODE:UpdateHUD_Alive( InRound ) */
 	end
 	
 end
@@ -80,11 +116,224 @@ end
 function GM:HUDPaint()
 
 	self.BaseClass:HUDPaint()
+
+	GAMEMODE:UpdatePerrinHUD()
 	
-	GAMEMODE:OnHUDPaint()
+	--MattHUD()
+	
+	--GAMEMODE:OnHUDPaint()
 	GAMEMODE:RefreshHUD()
 	
 end
+
+--
+local function DrawHUDHealth()
+	if !LocalPlayer():Alive() then return end
+	
+	surface.SetMaterial( hpBG )
+	surface.SetDrawColor(255,255,255,255)
+	surface.DrawTexturedRect( 30, ScrH() - 130, 165, 104)
+	surface.SetTextPos( 97, ScrH() - 85 )
+	surface.SetTextColor( 24, 103, 136, 255 )
+	surface.SetFont( "PerrinFont" )
+	surface.DrawText( LocalPlayer():Health() )
+	
+end
+
+local function DrawHUDAmmo()
+	if !LocalPlayer():Alive() then return end
+	local text = "0"
+	if IsValid(LocalPlayer():GetActiveWeapon()) then
+		text = LocalPlayer():GetActiveWeapon():Clip1()
+	end
+	surface.SetMaterial( ammoBG )
+	surface.SetDrawColor(255,255,255,255)
+	surface.DrawTexturedRect( ScrW() - 190, ScrH() - 130, 159, 125)
+	surface.SetTextPos( ScrW() - 105 , ScrH() - 85 )
+	surface.SetTextColor( 24, 103, 136, 255 )
+	surface.SetFont( "PerrinFont" )
+	surface.DrawText( text )
+	
+end
+
+local function DrawHUDTime()
+	--if !LocalPlayer():Alive() then return end
+	local timerValue = 0
+	local TimeMessage = ""
+
+	if ( bWaitingToSpawn ) then
+		timerValue = LocalPlayer():GetNWFloat( "RespawnTime", 0 )
+		TimeMessage = util.ToMinutesSeconds( timerValue )
+	end
+
+	if (InRound) then
+		if ( GetGlobalFloat( "RoundStartTime", 0 ) > CurTime() ) then
+			timerValue = GetGlobalFloat( "RoundStartTime", 0 )
+		else
+			timerValue =  GetGlobalFloat( "RoundEndTime" )
+		end 
+		TimeMessage = util.ToMinutesSeconds( timerValue - CurTime() )
+	end
+		
+	surface.SetMaterial( timeBG )
+	surface.SetDrawColor(255,255,255,255)
+	surface.DrawTexturedRect( (ScrW() / 2) - 130, 30, 261, 90)
+	surface.SetTextPos( (ScrW() / 2) - 40, 60 )
+	surface.SetTextColor( 24, 103, 136, 255 )
+	surface.SetFont( "PerrinFont" )
+	surface.DrawText( TimeMessage )
+	
+end
+
+function MattHUD()
+
+	DrawHUDHealth()
+	DrawHUDAmmo()
+	DrawHUDTime()
+	
+end
+function GM:UpdatePerrinHUD()
+
+	if (!IsValid(hudHealth)) then		
+		hudHealth = vgui.Create( "DPanel" )
+		hudHealth:SetSize( 165, 104 )
+		hudHealth:SetPos(30, ScrH() - 130)
+		hudHealth:SetDrawBackground( false )
+		
+		local img_bg = vgui.Create( "DImage", hudHealth )
+		img_bg:SetSize( hudHealth:GetSize() )		
+		img_bg:SetImage( "freezetag/Health.png" )	
+
+		hudHealthText = vgui.Create("DLabel", hudHealth)
+		hudHealthText:SetPos(55,45)
+		hudHealthText:SetFont("PerrinFont")
+		hudHealthText:SetTextColor( Color( 24, 103, 136, 255 ) )
+		hudHealthText:SetText("100")
+		hudHealthText:SizeToContents()
+		hudHealthText:SetVisible(true)
+	end	
+
+	if (!IsValid(hudAmmo)) then		
+		hudAmmo = vgui.Create( "DPanel" )
+		hudAmmo:SetSize( 159, 125 )
+		hudAmmo:SetPos(ScrW() - 190, ScrH() - 130)
+		hudAmmo:SetDrawBackground( false )
+		
+		local hudAmmoBG = vgui.Create( "DImage", hudAmmo )
+		hudAmmoBG:SetSize( hudAmmo:GetSize() )		
+		hudAmmoBG:SetImage( "freezetag/ammo.png" )	
+
+		hudAmmoText = vgui.Create("DLabel", hudAmmo)
+		hudAmmoText:SetPos(55,45)
+		hudAmmoText:SetFont("PerrinFont")
+		hudAmmoText:SetTextColor( Color( 24, 103, 136, 255 ) )
+		hudAmmoText:SetText("0")
+		hudAmmoText:SizeToContents()
+		hudAmmoText:SetVisible(true)
+	end	
+
+	if (!IsValid(hudTime)) then		
+		hudTime = vgui.Create( "DPanel" )
+		hudTime:SetSize( 261, 90 )
+		hudTime:SetPos((ScrW() / 2) - 130, 30)
+		hudTime:SetDrawBackground( false )
+		
+		local hudTimeBG = vgui.Create( "DImage", hudTime )
+		hudTimeBG:SetSize( hudTime:GetSize() )		
+		hudTimeBG:SetImage( "freezetag/time.png" )	
+
+		hudTimeText = vgui.Create("DLabel", hudTime)
+		hudTimeText:SetPos(100,30)
+		hudTimeText:SetFont("PerrinFont")
+		hudTimeText:SetTextColor( Color( 24, 103, 136, 255 ) )
+		hudTimeText:SetText("0")
+		hudTimeText:SizeToContents()
+		hudTimeText:SetVisible(true)
+	end
+	
+	if (IsValid(hudTeams)) then
+		/* hudTeams:Remove() */
+	end
+	
+
+	
+
+	if (!IsValid(hudTeams)) then		
+		hudTeams = vgui.Create( "DPanel" )
+		hudTeams:SetSize( 300, 90 )
+		hudTeams:SetPos((ScrW() / 2) - 130, ScrH() - 100)
+		hudTeams:SetDrawBackground( false )
+				
+		local redPlayers = team.GetPlayers(TEAM_RED)
+		for key, currentPlayer in pairs(redPlayers) do
+			if (currentPlayer:GetNWBool( "Frozen", false )) then
+				debugVal = "FROZEN"
+			else
+				debugVal = "FREE"
+			end
+		end
+		
+		hudTeamsText = vgui.Create("DLabel", hudTeams)
+		hudTeamsText:SetPos(100,30)
+		hudTeamsText:SetFont("PerrinFont")
+		hudTeamsText:SetTextColor( Color( 24, 103, 136, 255 ) )
+		hudTeamsText:SetText(debugVal)
+		hudTeamsText:SizeToContents()
+		hudTeamsText:SetVisible(true)
+		
+	end	
+
+
+
+	
+	if (IsValid(hudHealthText)) then
+		hudHealthText:SetText(LocalPlayer():Health())
+		hudHealthText:SizeToContents()
+	end
+	
+	if (IsValid(hudAmmoText)) then
+		local ammoText = "0"
+		if IsValid( LocalPlayer():GetActiveWeapon() ) then
+			ammoText = LocalPlayer():GetActiveWeapon():Clip1()
+		end
+		hudAmmoText:SetText(ammoText)
+		hudAmmoText:SizeToContents()
+	end
+	
+	if (IsValid(hudTimeText)) then
+
+		local timerValue = 0
+		local TimeMessage = ""
+
+		if ( bWaitingToSpawn ) then
+			timerValue = LocalPlayer():GetNWFloat( "RespawnTime", 0 )
+			TimeMessage = util.ToMinutesSeconds( timerValue )
+		end
+	
+		if (InRound) then
+			if ( GetGlobalFloat( "RoundStartTime", 0 ) > CurTime() ) then
+				timerValue = GetGlobalFloat( "RoundStartTime", 0 )
+			else
+				timerValue =  GetGlobalFloat( "RoundEndTime" )
+			end 
+			TimeMessage = util.ToMinutesSeconds( timerValue - CurTime() )
+		end
+	
+		hudTimeText:SetText(TimeMessage)
+		hudTimeText:SizeToContents()
+	end
+
+
+end
+
+concommand.Add( "testc1", function( ply )
+	 GAMEMODE:UpdatePerrinHUD()
+end )
+concommand.Add( "testc2", function( ply )
+	if (IsValid(hudTeamsText)) then
+		hudTeamsText:Remove()
+	end
+end )
 
 function GM:UpdateHUD_RoundResult( RoundResult, Alive )
 
@@ -93,7 +342,7 @@ function GM:UpdateHUD_RoundResult( RoundResult, Alive )
 	if ( type( RoundResult ) == "number" ) && ( team.GetAllTeams()[ RoundResult ] && txt == "" ) then
 		local TeamName = team.GetName( RoundResult )
 		if ( TeamName ) then txt = TeamName .. " Wins!" end
-	elseif ( type( RoundResult ) == "Player" && ValidEntity( RoundResult ) && txt == "" ) then
+	elseif ( type( RoundResult ) == "Player" && IsValid( RoundResult ) && txt == "" ) then
 		txt = RoundResult:Name() .. " Wins!"
 	end
 
@@ -105,7 +354,7 @@ function GM:UpdateHUD_RoundResult( RoundResult, Alive )
 end
 
 function GM:UpdateHUD_Observer( bWaitingToSpawn, InRound, ObserveMode, ObserveTarget )
-
+--[[
 	local lbl = nil
 	local txt = nil
 	local col = Color( 255, 255, 255 );
@@ -131,7 +380,7 @@ function GM:UpdateHUD_Observer( bWaitingToSpawn, InRound, ObserveMode, ObserveTa
 
 	
 	GAMEMODE:UpdateHUD_Dead( bWaitingToSpawn, InRound )
-
+--]]
 end
 
 function GM:UpdateHUD_Dead( bWaitingToSpawn, InRound )
@@ -158,7 +407,7 @@ function GM:UpdateHUD_Dead( bWaitingToSpawn, InRound )
 	end
 	
 	if ( InRound ) then
-	
+	--[[
 		local RoundTimer = vgui.Create( "DHudCountdown" );
 			RoundTimer:SizeToContents()
 			RoundTimer:SetValueFunction( function() 
@@ -167,9 +416,9 @@ function GM:UpdateHUD_Dead( bWaitingToSpawn, InRound )
 			RoundTimer:SetLabel( "TIME" )
 		GAMEMODE:AddHUDItem( RoundTimer, 8 )
 		return
-	
+	--]]
 	end
-	
+	--[[
 	if ( Team != TEAM_SPECTATOR && !Alive ) then
 	
 		local RespawnText = vgui.Create( "DHudElement" );
@@ -178,13 +427,14 @@ function GM:UpdateHUD_Dead( bWaitingToSpawn, InRound )
 		GAMEMODE:AddHUDItem( RespawnText, 8 )
 		
 	end
-
+--]]
 end
+
 
 function GM:UpdateHUD_Alive( InRound )
 
-	GAMEMODE:PaintAmmo()
-	GAMEMODE:PaintHealth()
+	/* GAMEMODE:PaintAmmo()
+	GAMEMODE:PaintHealth() */
 
 	if ( GAMEMODE.RoundBased || GAMEMODE.TeamBased ) then
 	
@@ -236,7 +486,7 @@ function GM:PaintAmmo()
 	local AmmoIndicator = vgui.Create( "DHudUpdater" )
 		AmmoIndicator:SizeToContents()
 		AmmoIndicator:SetValueFunction( function()
-											if ValidEntity( LocalPlayer():GetActiveWeapon() ) then
+											if IsValid( LocalPlayer():GetActiveWeapon() ) then
 												return LocalPlayer():GetActiveWeapon():Clip1() or 0
 											end
 											return 0
