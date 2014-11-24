@@ -1,7 +1,7 @@
 
 ColorModify = {}
 ColorModify[ "$pp_colour_addr" ] 		= -0.025
-ColorModify[ "$pp_colour_addg" ] 		= 0.015
+ColorModify[ "$pp_colour_addg" ] 		= 0.01
 ColorModify[ "$pp_colour_addb" ] 		= 0.03
 ColorModify[ "$pp_colour_brightness" ] 	= 0
 ColorModify[ "$pp_colour_contrast" ] 	= 1.05

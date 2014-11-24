@@ -92,13 +92,15 @@ function meta:ThawCheck()
 				nameCount = nameCount + 1
 				v:AddFrags( 1 )
 			end
+			print("Start thaw message icon")
 			net.Start( "PlayerKilledByPlayer" )
--		
--					net.WriteEntity( self )
--					net.WriteString( "thaw" )
--				--	net.WriteEntity( )
--		
--			net.Broadcast()
+		
+				net.WriteEntity( self )
+				net.WriteString( "thaw" )
+				net.WriteEntity( thawerTable[1] )
+		
+			net.Broadcast()
+			
 			self:Thaw(true)
 			self:PlayerMsg("You were thawed by " .. names .. "!")
 		end

@@ -108,7 +108,7 @@ function GM:RefreshHUD()
 	elseif ( !Alive ) then
 		GAMEMODE:UpdateHUD_Dead( WaitingToRespawn, InRound )
 	else
-		/* GAMEMODE:UpdateHUD_Alive( InRound ) */
+		GAMEMODE:UpdateHUD_Alive( InRound )
 	end
 	
 end
@@ -385,7 +385,7 @@ end
 
 function GM:UpdateHUD_Dead( bWaitingToSpawn, InRound )
 
-	if ( !InRound && GAMEMODE.RoundBased ) then
+	--[[if ( !InRound && GAMEMODE.RoundBased ) then
 	
 		local RespawnText = vgui.Create( "DHudElement" );
 			RespawnText:SizeToContents()
@@ -393,7 +393,7 @@ function GM:UpdateHUD_Dead( bWaitingToSpawn, InRound )
 		GAMEMODE:AddHUDItem( RespawnText, 8 )
 		return
 		
-	end
+	end--]]
 
 	if ( bWaitingToSpawn ) then
 
@@ -455,7 +455,7 @@ function GM:UpdateHUD_Alive( InRound )
 			Bar:AddItem( TeamIndicator )
 			
 		end
-		
+		--[[
 		if ( GAMEMODE.RoundBased ) then 
 		
 			local RoundNumber = vgui.Create( "DHudUpdater" );
@@ -473,7 +473,7 @@ function GM:UpdateHUD_Alive( InRound )
 			Bar:AddItem( RoundTimer )
 
 		end
-		
+		--]]
 	end
 
 end

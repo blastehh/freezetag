@@ -8,8 +8,11 @@ function GM:Initialize( )
 	self.BaseClass:Initialize()
 	
 	surface.CreateFont("CSKillIcons", {
-	size = ScreenScale(30),
-	font = "csd"})
+		font = "csd",
+		size = ScreenScale(25),
+		weight = 500
+		}
+	)
 
 	killicon.AddFont( "thaw", "CSKillIcons", "F", Color( 0, 255, 80 ) )	
 
@@ -23,7 +26,7 @@ function GM:RenderScreenspaceEffects()
 	
 		ColorModify[ "$pp_colour_addb" ]		= 0.10
 		ColorModify[ "$pp_colour_mulb" ] 		= 0.50
-		
+		ColorModify[ "$pp_colour_colour" ] 		= 0.85
 	end
 	
 end
