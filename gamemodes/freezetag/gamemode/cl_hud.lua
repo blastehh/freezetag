@@ -9,7 +9,7 @@ local RoundResult = 0
 local RoundWinner = nil
 local IsObserver = false
 local ObserveMode = 0
-local ObserveTarget = NULL
+local ObserveTarget = nil
 local InVote = false
 
 local fontCreated = false
@@ -19,7 +19,7 @@ local hudAmmo = nil
 local hudAmmoText = nil
 local hudTime = nil
 local hudTimeText = nil
-local hudTeams = nul
+local hudTeams = nil
 local hudTeamsText = nil
 local redrawTeams = true
 
