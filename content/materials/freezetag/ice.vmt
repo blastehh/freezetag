@@ -1,9 +1,0 @@
-"VertexLitGeneric"
-{ 
-	"$basetexture" "freezetag/ice" 
-	"$surfaceprop" "metal"
-	"$envmap" "env_cubemap"
-	"$envmaptint" "[ .5 .5 .5 ]"
-	"$selfillum" 0
-	"$model" 1
-} 
