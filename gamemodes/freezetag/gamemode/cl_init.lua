@@ -7,6 +7,10 @@ function GM:Initialize( )
 
 	self.BaseClass:Initialize()
 	
+	surface.CreateFont("CSKillIcons", {
+	size = ScreenScale(30),
+	font = "csd"})
+
 	killicon.AddFont( "thaw", "CSKillIcons", "F", Color( 0, 255, 80 ) )	
 
 end
